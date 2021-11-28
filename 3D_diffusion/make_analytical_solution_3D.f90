@@ -38,7 +38,7 @@ integer :: singlepoint_x_y_z_index
 	call chdir(Path)
 
 	!calculate new differential and singlepoint coordinate
-!	singlepoint_x_y_z_index=idnint(singlepoint_x_y_z_coordinate*(n-1)+1)
+	singlepoint_x_y_z_index=idnint(singlepoint_x_y_z_coordinate*(n-1)+1)
 	
 !write used parameters to filename
 	open(1, file = "parameters.txt", status='new')
@@ -57,10 +57,8 @@ integer :: singlepoint_x_y_z_index
 	close(1)
 	
 	!make analytical results to comparing
-!	open(2, file = "3D_singlepoint_data.txt", status='new')
 	call make_analytical_sol_to_compare(matrix,n,k)
 !	call make_analytical_sol_single_point_to_compare(k,singlepoint_x_y_z_index,singlepoint_x_y_z_index,singlepoint_x_y_z_index)	
-!	close(2)
 contains
 !ALIOHJELMAT
 
@@ -94,10 +92,10 @@ integer,intent(in) :: n,k
 integer :: a,i,j,z
 real(kind=rk), INTENT(INOUT) :: matrix(n,n,n)
 integer :: k1,n1=3 !for do loop to make init matrix
-real(kind=rk) :: pi=4*atan(1.0),r,r2,T
-	do a=0,int(k/every_nth_save) !do loop for every time step
-!	if(mod(a,50).eq.0) then !only every 50th is calculated
-	T=a*every_nth_save*DT
+real(kind=rk) :: pi=4*atan(1.0_8),r,r2,T
+	do a=0,k !do loop for every time step
+	if (mod(a,every_nth_save).eq.0) then
+	T=a*DT
 	matrix=0
 	do i=1,n
 		do j=1,n
@@ -106,7 +104,7 @@ real(kind=rk) :: pi=4*atan(1.0),r,r2,T
 				r2=((i-(n+1)/2))**2+((j-(n+1)/2))**2+((z-(n+1)/2))**2
 				r=sqrt(r2)/(n-1) !normalize
 				if (r.le.0.00000001) then
-					r = 0.0000000001_8
+					r = 0.0000000000001_8
 				end if
 				!boundary condition 
 				!if (r.ge.0.50) then
@@ -123,14 +121,14 @@ real(kind=rk) :: pi=4*atan(1.0),r,r2,T
 				!if r=0 there is a bug because fortran can't calculate limit
 				
 				if (isnan(matrix(i,j,z))) then
-					matrix(i,j,z)=1
+					matrix(i,j,z)=1.0_8
 				end if
 			end do
 		end do	
 	end do
-	call write_3d_matrix_to_file(matrix,n,a*every_nth_save)
+	call write_3d_matrix_to_file(matrix,n,a)
 !	call write_single_point3d_matrix_to_file(matrix,n,a,singlepoint_x_y_z_index,singlepoint_x_y_z_index,singlepoint_x_y_z_index)
-!	end if 	
+	end if 	
 	end do
 
 end subroutine
@@ -140,24 +138,39 @@ integer,intent(in) :: k,i,j,z
 integer :: a
 real(kind=rk) :: value
 integer :: k1,n1=3 !for do loop to make 3 terms to solution
-real(kind=rk) :: pi=4*atan(1.0),r,r2,T
-	do a=0,int(k/every_nth_save) !do loop for every time step
+real(kind=rk) :: pi=4*atan(1.0_8),r,r2,T
+character(len=80) :: filename
 
-
-	T=a*every_nth_save*DT
-				
+!calculate the radius of each element		
 	r2=((i-(n+1)/2))**2+((j-(n+1)/2))**2+((z-(n+1)/2))**2
 	r=sqrt(r2)/(n-1) !normalize
 	if (r.le.0.00000001) then
-		r = 0.0000000001_8
+		r = 0.0000000000001_8
 	end if
+
+	do a=0,k !do loop for every time step
+	if (mod(a,every_nth_save).eq.0) then
+
+	T=a*DT
+				
+
 	value = 0
+
+	!calculate solution
 	do k1=1,n1
 		value=value+sin(2*k1**2*r*pi)/(2*k1**2*r*pi)*exp(-4*k1**4*pi**2*T)
 	end do
 	value=value/n1
-	write(2,*) value
+
+
+	write(filename,'(A, i0,A)') "3D_data_", a, ".txt"
+	!Open the file where the results will be written. 
+	open(1, file = filename, status='new')
 	
+	write(1,*) value
+	
+	close(1)
+	end if
 	end do
 
 end subroutine

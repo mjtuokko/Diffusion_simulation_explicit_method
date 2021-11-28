@@ -206,7 +206,7 @@ real(kind=rk) :: pi=4*atan(1.0),r,r2,T
 				r2=((i-(n+1)/2))**2+((j-(n+1)/2))**2+((z-(n+1)/2))**2
 				r=sqrt(r2)/(n-1) !normalize
 				if (r.le.0.00000001) then
-					r = 0.0000000001_8
+					r = 0.0000000000001_8
 				end if
 				!boundary condition 
 				!if (r.ge.0.50) then
