@@ -12,7 +12,7 @@ import main_program_1D as start
 #make root window  
 root = Tk()
 root.geometry("500x700")
-root.title("2D Diffusion")
+root.title("1D Diffusion")
 
 #define variables
 Number_of_iterations=10000
