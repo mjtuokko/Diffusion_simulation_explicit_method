@@ -9,7 +9,7 @@ integer :: i,j !iteration parameters
 real(kind=rk) :: DX, DT !Approximation of differentials of functions
 character(len=80) :: arg, arg1, arg2, arg4, Path
 integer :: every_nth_save = 1
-real(kind=rk) :: singlepoint_x_y_z_coordinate=0.5_8 !coordinate (X,Y,Z) to save
+real(kind=rk) :: singlepoint_x_y_z_coordinate=0.45_8 !coordinate (X,Y,Z) to save
 integer :: singlepoint_x_y_z_index
 !DX is used DT and k overwritten later
 
@@ -47,6 +47,11 @@ integer :: singlepoint_x_y_z_index
 	write(1,*) n
 	write(1,*) k
 	write(1,*) every_nth_save
+	write(1,*) singlepoint_x_y_z_index
+	!Close the file parameters is written
+	close(1)
+! write parameters meaning
+	open(1, file = "parameters_meaning.txt", status='new')
 	write(1,*) "^ Meaning" !because this file is automatically readed sometimes, only parameter is written in each file
 	write(1,*) "DX"
 	write(1,*) "DT"
