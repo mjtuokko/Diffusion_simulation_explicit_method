@@ -1,4 +1,4 @@
-Code for the Bachelor's Thesis. 
+Code for the bachelor's thesis. 
 
 The code can simulate numerical solutions to a 1-, 2-, or 3-dimensional diffusion equation. 
 Because the code contains some bash commands, it only works on Linux.
@@ -26,3 +26,6 @@ size_param = 101
 size_of_analytical_solution_param = 101
 every_nth_save_param = 100
 All other parameters are true values related to plotting: 1=make plot, 0=don't make.
+
+
+The bachelor's thesis can be found in the pdf file.
